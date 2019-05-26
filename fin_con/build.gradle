@@ -1,0 +1,30 @@
+plugins {
+	id 'org.springframework.boot' version '2.1.5.RELEASE'
+	id 'java'
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.groupFive'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile('org.postgresql:postgresql')
+	compile('org.projectlombok:lombok')
+	compile('org.springframework.boot:spring-boot-starter-security')
+	compile('org.springframework.session:spring-session-jdbc')
+	compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+	compile('org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.1.0.RELEASE')
+	compile('javax.xml.bind:jaxb-api')
+	compile('com.sun.xml.bind:jaxb-core')
+	compile('com.sun.xml.bind:jaxb-impl')
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
