@@ -21,7 +21,6 @@ public class Profit {
     @Column(updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yy HH:mm")
     private LocalDateTime creationDate;
-    private Integer amount;
     private String userId;
 
     public String getUserId() {
@@ -30,15 +29,6 @@ public class Profit {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public Integer getAmount() {
-        return amount;
-    }
-
-    public Integer setAmount(Integer amount) {
-        this.amount = amount;
-        return amount;
     }
 
     public Long getId() {

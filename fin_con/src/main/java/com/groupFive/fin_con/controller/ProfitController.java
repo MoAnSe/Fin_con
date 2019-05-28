@@ -5,6 +5,7 @@ import com.groupFive.fin_con.domain.User;
 import com.groupFive.fin_con.repo.ProfitRepo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,15 +16,45 @@ import java.util.List;
 @RequestMapping("profit")
 public class ProfitController {
     private final ProfitRepo profitRepo;
-//    @Autowired
-//    JdbcTemplate jdbcTemplate;
-//    public Integer balance(){
-//        Profit profit = new Profit();
-//        int pamount = jdbcTemplate.queryForObject("select sum(profit.p_amount) from profit;", Integer.class);
-//        int lamount = jdbcTemplate.queryForObject("select sum(loss.l_amount) from loss;", Integer.class);
-//        Integer amount = pamount-lamount;
-//        return profit.setAmount(amount);
-//    }
+
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+    @GetMapping("/amo")
+    public int balance(@AuthenticationPrincipal User user){
+        int pamount;
+        int lamount;
+        String i = user.getId();
+        try{
+            int l = jdbcTemplate.queryForObject("select sum(loss.l_amount) from loss\n" +
+                    "join usr on usr.id = loss.user_id\n" +
+                    "where usr.id = ?;", Integer.class, i);
+            lamount = l;
+
+        }catch(NullPointerException e){
+            lamount = 0;
+        }
+        try{
+            int p = jdbcTemplate.queryForObject("select sum(profit.p_amount) from profit\n" +
+                    "join usr on usr.id = profit.user_id\n" +
+                    "where usr.id = ?;", Integer.class, i);
+            pamount = p;
+
+        }catch(NullPointerException e){
+            pamount = 0;
+        }
+
+        int amount = pamount-lamount;
+        if(pamount <= 0  && lamount <= 0){
+            return 0;
+        }else {
+            if(lamount <= 0){
+                return pamount;
+            }
+
+            return amount;
+        }
+
+    }
 
 
     @Autowired

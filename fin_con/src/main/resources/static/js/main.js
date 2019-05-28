@@ -10,6 +10,7 @@ function getIndex(list, id) {
 
 var profitApi = Vue.resource('/profit{/id}');
 var lossApi = Vue.resource('/loss{/id}');
+var balanceApi = Vue.resource('/profit/amo{/id}');
 
 Vue.component('message-form', {
     props: ['messages', 'messageAttr'],
@@ -62,7 +63,7 @@ Vue.component('message-form', {
 Vue.component('message-row', {
     props: ['message', 'editMethod', 'messages'],
     template: '<div  style="display: flex; justify-content: space-between;">' +
-        '{{ message.creationDate }} <span style="word-break:break-all;">{{ message.text }}</span>'+
+        '{{ message.creationDate }} <span style="word-break:break-all;">{{ message.text }}  </span>'+
         '<b style="color: green;">{{ message.p_amount }}</b>' +
         '<span style="position: relative; right: 0">' +
         '<input type="button" value="Edit" @click="edit" />' +
@@ -103,7 +104,7 @@ Vue.component('messages-list', {
     }
 });
 Vue.component('loss-message-form', {
-    props: ['loss_messages', 'loss_messageAttr'],
+    props: ['loss_messages', 'loss_messageAttr','bal'],
     data: function() {
         return {
             text: '',
@@ -174,7 +175,7 @@ Vue.component('loss-message-row', {
     }
 });
 Vue.component('loss-messages-list', {
-    props: ['loss_messages'],
+    props: ['loss_messages', 'bal'],
     data: function() {
         return {
             loss_message: null
@@ -182,7 +183,7 @@ Vue.component('loss-messages-list', {
     },
     template:
         '<div style="position: relative; width: 500px;  margin-left: 30px;">' +
-        '<loss-message-form :loss_messages="loss_messages" :loss_messageAttr="loss_message" />' +
+        '<loss-message-form :loss_messages="loss_messages" :loss_messageAttr="loss_message" v-if="bal > 0"/>' +
         '<loss-message-row style="padding-right: 10px; margin-top: 15px;" v-for="loss_message in loss_messages"'+
         ':key="loss_message.id" :loss_message="loss_message" ' +
         ':editlMethod="editlMethod" :loss_messages="loss_messages" />' +
@@ -200,15 +201,27 @@ var app = new Vue({
     template:'<div>'+
         '<div v-if="!profile">Необходимо авторизоватся!<a href="/login">Google</a></div>'+
         '<div v-else >' +
-        '<div style="padding: 10px;">{{profile.name}}&nbsp;<a href="/logout">Выйти</a></div>'+
+        '<div style="padding: 10px;">{{profile.name}}&nbsp;<a href="/logout">Exit</a></div>'+
+        '<div><b>Balance: {{bal}}</b></div>'+
         '<span style="display: flex;">'+
         '<messages-list :messages="messages"/>'+
-        '<loss-messages-list :loss_messages="loss_messages"/>'+
+        '<loss-messages-list :loss_messages="loss_messages" :bal="bal"/>'+
         '</span>'+
         '</div>'+
         '</div>',
     data: {
         messages: frontendData.vprofit,
         loss_messages: frontendData.vloss,
-        profile: frontendData.profile
-    }});
+        profile: frontendData.profile,
+        bal: 0
+    },
+    methods: {
+        getBal: function(){
+            balanceApi.get().then(result => this.bal = result.body)
+        }
+    },
+    created: function(){
+        this.getBal()
+    }
+
+});
