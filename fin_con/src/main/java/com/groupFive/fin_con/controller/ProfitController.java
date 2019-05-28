@@ -78,7 +78,7 @@ public class ProfitController {
     public Profit update(
             @PathVariable("id") Profit messageFromDb,
             @RequestBody Profit message){
-        BeanUtils.copyProperties(message, messageFromDb,"id" );
+        BeanUtils.copyProperties(message, messageFromDb,"id","userId", "creationDate" );
         return profitRepo.save(messageFromDb);
     }
     @DeleteMapping("{id}")

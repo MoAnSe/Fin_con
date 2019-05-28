@@ -40,7 +40,7 @@ public class LossController {
     public Loss update(
             @PathVariable("id") Loss messageFromDb,
             @RequestBody Loss message){
-        BeanUtils.copyProperties(message, messageFromDb,"id" );
+        BeanUtils.copyProperties(message, messageFromDb,"id","userId", "creationDate" );
         return lossRepo.save(messageFromDb);
     }
     @DeleteMapping("{id}")
